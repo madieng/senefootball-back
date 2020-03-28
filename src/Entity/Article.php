@@ -2,16 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *  attributes={"pagination_items_per_page"=10},
+ *  normalizationContext={"groups"={"read_list"}},
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @ApiFilter(SearchFilter::class, properties={"slug"})
  */
 class Article
 {
@@ -19,36 +26,43 @@ class Article
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read_list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read_list"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"read_list"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"read_list"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read_list"})
      */
     private $caption;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read_list"})
      */
     private $slug;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read_list"})
      */
     private $createdAt;
 
@@ -58,12 +72,13 @@ class Article
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Admin", inversedBy="ads")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Admin", inversedBy="articles")
+     * @Groups({"read_list"})
      */
     private $createdBy;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="ad")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article")
      */
     private $comments;
 
@@ -162,9 +177,9 @@ class Article
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?string
     {
-        return $this->createdAt;
+        return $this->createdAt->format('d-m-Y H:i');
     }
 
     public function setCreatedAt(\DateTimeInterface $createdAt): self

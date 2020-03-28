@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -29,11 +30,13 @@ abstract class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read_list"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read_list"})
      */
     private $lastname;
 
@@ -44,6 +47,7 @@ abstract class User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read_list"})
      */
     private $avatar;
 
